@@ -88,6 +88,27 @@ services:
       - ${LMS_API_HOST_ADDRESS:?'LMS_API_HOST_ADDRESS is required'}:${LMS_API_HOST_PORT:?'LMS_API_HOST_PORT is required'}:${CADDY_CONTAINER_PORT}
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+    bot:
+    build:
+      context: ./bot
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      # ВАЖНО: Внутри докера бот стучится к бэкенду по имени сервиса 'backend' на порт 8000
+      - LMS_API_BASE_URL=http://backend:8000
+      - LMS_API_KEY=${LMS_API_KEY}
+      - BOT_TOKEN=${BOT_TOKEN}
+      # ВАЖНО: LLM находится на сервере хоста, поэтому используем host.docker.internal
+      - LLM_API_BASE_URL=http://host.docker.internal:42005/v1
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_API_MODEL=${LLM_API_MODEL}
+    extra_hosts:
+      # Позволяет боту обратиться к localhost виртуальной машины
+      - "host.docker.internal:host-gateway"
+
 
 volumes:
   postgres_data:

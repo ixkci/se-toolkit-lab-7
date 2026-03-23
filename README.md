@@ -95,3 +95,30 @@ By the end of this lab, you should be able to say:
 ### Optional
 
 1. [Flutter Web Chatbot](./lab/tasks/optional/task-1.md)
+
+## Deployment
+
+This project uses Docker Compose to run all services (Backend, Database, Caddy reverse-proxy, and the Telegram Bot).
+
+### Prerequisites
+
+Make sure your `.env.docker.secret` file is configured with the following variables:
+
+- `LMS_API_KEY` (for internal backend auth)
+- `BOT_TOKEN` (your Telegram Bot token)
+- `LLM_API_KEY`, `LLM_API_BASE_URL`, `LLM_API_MODEL` (for intent routing via Qwen)
+
+### How to Deploy
+
+1. Build and start all services in detached mode:
+
+   ```bash
+   docker compose --env-file .env.docker.secret up --build -d
+2. Verify that all containers are healthy:
+
+    ```bash
+    docker compose --env-file .env.docker.secret ps
+3. Check the bot logs to ensure it successfully connected to Telegram:
+
+    ```bash
+    docker compose --env-file .env.docker.secret logs bot --tail 20
