@@ -54,5 +54,5 @@ def process_text(text: str) -> str:
     elif text.startswith("/"):
         return handle_unknown(text)
     else:
-        # Для Task 3 (обработка свободного текста), пока просто возвращаем ошибку
-        return "Please use a command like /help."
+        # P1.1: Отправляем естественный язык в LLM роутер
+        return llm_router.route_intent(text)

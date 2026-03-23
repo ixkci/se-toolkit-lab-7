@@ -18,7 +18,6 @@ def format_error(e: Exception) -> str:
 def get_health() -> str:
     try:
         with httpx.Client() as client:
-            # Используем /items/ как проверку здоровья по заданию
             response = client.get(
                 f"{LMS_API_BASE_URL}/items/", headers=get_headers(), timeout=5.0
             )
@@ -46,10 +45,9 @@ def get_labs() -> str:
 
             result = ["Available labs:"]
             for lab in labs:
-                # В зависимости от структуры JSON выводим ID и название
                 lab_id = lab.get("id", "Unknown")
-                lab_name = lab.get("name", "Unknown")
-                result.append(f"- {lab_id} — {lab_name}")
+                lab_name = lab.get("title", "Unknown")
+                result.append(f"- Lab 0{lab_id} — {lab_name}")
             return "\n".join(result)
     except Exception as e:
         return format_error(e)
@@ -74,9 +72,9 @@ def get_scores(lab_id: str) -> str:
 
             result = [f"Pass rates for {lab_id}:"]
             for item in data:
-                task_name = item.get("task_name", "Unknown Task")
-                pass_rate = item.get("pass_rate", 0)
-                attempts = item.get("total_attempts", 0)
+                task_name = item.get("task", "Unknown Task")
+                pass_rate = item.get("avg_score", 0)
+                attempts = item.get("attempts", 0)
                 result.append(f"- {task_name}: {pass_rate:.1f}% ({attempts} attempts)")
             return "\n".join(result)
     except Exception as e:
