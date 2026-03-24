@@ -1,16 +1,11 @@
-# Измените импорты в bot.py:
+import sys
+import argparse
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    MessageHandler,
-    CallbackQueryHandler,
-    filters,
-    ContextTypes,
-)
+from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
 
 import config
 from handlers.commands import process_text
+from services import lms_client, llm_router
 
 
 # Обновленный tg_handler:
@@ -62,3 +57,14 @@ def run_telegram_bot():
 
     print("Starting Telegram bot...")
     app.run_polling()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="LMS Bot")
+    parser.add_argument("--test", type=str, help="Run in test mode")
+    args = parser.parse_args()
+
+    if args.test:
+        response = process_text(args.test)
+        print(response)  # ВОТ ЭТА СТРОКА ОЧЕНЬ ВАЖНА!
+        sys.exit(0)
+    else:
+        run_telegram_bot()

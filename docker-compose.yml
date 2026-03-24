@@ -30,7 +30,7 @@ services:
       - DB_PASSWORD=${POSTGRES_PASSWORD:?'POSTGRES_PASSWORD is required'}
     depends_on:
       postgres:
-        condition: service_healthy
+        condition: service_started
 
   postgres:
     image: ${REGISTRY_PREFIX:-harbor.pg.innopolis.university/docker-hub-cache/}postgres:18.3-alpine
@@ -69,7 +69,7 @@ services:
       - ${PGADMIN_HOST_ADDRESS:?'PGADMIN_HOST_ADDRESS is required'}:${PGADMIN_HOST_PORT:?'PGADMIN_HOST_PORT is required'}:80
     depends_on:
       postgres:
-        condition: service_healthy
+        condition: service_started
 
   caddy:
     build:
@@ -88,14 +88,14 @@ services:
       - ${LMS_API_HOST_ADDRESS:?'LMS_API_HOST_ADDRESS is required'}:${LMS_API_HOST_PORT:?'LMS_API_HOST_PORT is required'}:${CADDY_CONTAINER_PORT}
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
-    bot:
+  bot:
     build:
       context: ./bot
       dockerfile: Dockerfile
     restart: unless-stopped
     depends_on:
       backend:
-        condition: service_healthy
+        condition: service_started
     environment:
       # ВАЖНО: Внутри докера бот стучится к бэкенду по имени сервиса 'backend' на порт 8000
       - LMS_API_BASE_URL=http://backend:8000

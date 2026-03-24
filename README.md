@@ -108,7 +108,7 @@ Make sure your `.env.docker.secret` file is configured with the following variab
 - `BOT_TOKEN` (your Telegram Bot token)
 - `LLM_API_KEY`, `LLM_API_BASE_URL`, `LLM_API_MODEL` (for intent routing via Qwen)
 
-### How to Deploy
+## Deploy
 
 1. Build and start all services in detached mode:
 
